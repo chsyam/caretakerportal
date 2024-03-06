@@ -266,6 +266,35 @@ const getSessionDetails = async (patientId) => {
     return final_array;
 }
 
+const getIngestionFalureData = async () => {
+    const session_intakes = await SessionIntake.findAll();
+    var dict_failure_calculation = {};
+    session_intakes.map(intake => {
+        if (dict_failure_calculation[intake.medication_id] === undefined) {
+            if (intake.ingested)
+                dict_failure_calculation[intake.medication_id] = { ingested: 1, notIngested: 0, total: 1 };
+            else
+                dict_failure_calculation[intake.medication_id] = { ingested: 0, notIngested: 1, total: 1 }
+        } else {
+            if (intake.ingested)
+                dict_failure_calculation[intake.medication_id].ingested += 1;
+            else
+                dict_failure_calculation[intake.medication_id].notIngested += 1;
+            dict_failure_calculation[intake.medication_id].total += 1;
+        }
+    })
+    var final_array = [];
+    for (let key in dict_failure_calculation) {
+        const medicationDetails = await getMedicationById(key);
+        final_array.push(
+            {
+                name: medicationDetails.brand_name,
+                y: dict_failure_calculation[key].notIngested === 0 ? 0 : (dict_failure_calculation[key].notIngested / dict_failure_calculation[key].total) * 100
+            }
+        )
+    }
+    return final_array;
+}
 /**
  * Renders the patient page with patient information and caretaker options.
  *
@@ -284,8 +313,8 @@ const patient = async (req, res) => {
             const scheduleDetails = await getMedicationSchedules(patientDetails.id); // Function to get medication schedules
             const ingestionChartData = await getIngestionChartData(patientDetails.id);
             const sessionDetails = await getSessionDetails(patientDetails.id);
+            const ingestionFailureData = await getIngestionFalureData();
             // const dict_session_details = calculate_response_times(sessionDetails,)
-            console.log(sessionDetails);
             // const preProcessSheduleData = getPreprocessedScheduleData(scheduleDetails);
             return res.render('patient', {
                 patient: patientDetails,
@@ -293,7 +322,8 @@ const patient = async (req, res) => {
                 medicationData: medicationDetails,
                 schedules: scheduleDetails,//JSON.stringify(preProcessSheduleData),
                 sessionDetails: JSON.stringify(sessionDetails),
-                ingestionChartData: JSON.stringify(ingestionChartData)
+                ingestionChartData: JSON.stringify(ingestionChartData),
+                ingestionFailureData: JSON.stringify(ingestionFailureData)
             });
         } catch (error) {
             console.error(error);

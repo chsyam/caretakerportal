@@ -102,13 +102,13 @@
                 <div class="section_label">Medication Schedule</div>
                 <div class="tabsList_days">
                     <div class="tab" id="all_schedules">All Schedules</div>
-                    <div class="tab" id="day_0">Sunday - Day 0</div>
-                    <div class="tab" id="day_1">Monday - Day 1</div>
-                    <div class="tab" id="day_2">Tuesday - Day 2</div>
-                    <div class="tab" id="day_3">Wednesday - Day 3</div>
-                    <div class="tab" id="day_4">Thursday - Day 4</div>
-                    <div class="tab" id="day_5">Friday - Day 5</div>
-                    <div class="tab" id="day_6">Saturday - Day 6</div>
+                    <div class="tab" id="day_0">Sunday</div>
+                    <div class="tab" id="day_1">Monday</div>
+                    <div class="tab" id="day_2">Tuesday</div>
+                    <div class="tab" id="day_3">Wednesday</div>
+                    <div class="tab" id="day_4">Thursday</div>
+                    <div class="tab" id="day_5">Friday</div>
+                    <div class="tab" id="day_6">Saturday</div>
                 </div>
                 <div class="med-Info">
                     <table id="myTable">
@@ -461,7 +461,7 @@
             type: 'column',
         },
         title: {
-            text: "Medication ingestion failure rate over 30 Days",
+            text: "Medication ingestion failure rate over a Week",
         },
         legend: {
             enabled: false,
@@ -497,7 +497,7 @@
                 borderWidth: 0,
                 dataLabels: {
                     enabled: true,
-                    format: '{point.y}%'
+                    format: '{point.y:.1f}%'
                 }
             }
         },
@@ -506,36 +506,7 @@
             {
                 name: 'Medicines',
                 colorByPoint: true,
-                data: [
-                    {
-                        name: "Silicia",
-                        y: 2
-                    },
-                    {
-                        name: "Naproxen",
-                        y: 5
-                    },
-                    {
-                        name: "Acetaminophen",
-                        y: 3
-                    },
-                    {
-                        name: "Lidocaine",
-                        y: 1
-                    },
-                    {
-                        name: "Ibuprofin",
-                        y: 4
-                    },
-                    {
-                        name: "Glycerin",
-                        y: 2
-                    },
-                    {
-                        name: "Salicycli Acid",
-                        y: 1
-                    }
-                ],
+                data: {{{ ingestionFailureData }}}
             }
         ]
     });
